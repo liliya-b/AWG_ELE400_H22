@@ -44,13 +44,23 @@ architecture Behavioral of Wrapper is
            SIGNAL busy_sig,rx_req_sig,reset_n_sig,tx_load_en_sig : STD_LOGIC; --SIGNAUX entre les 2 modules 
            SIGNAL sclk_sig,mosi_sig,ss_n_sig,miso_sig : STD_LOGIC; -- Signaux entre les pin de sortie et le module SPI
            SIGNAL rx_data_sig, tx_load_data_sig : STD_LOGIC_VECTOR(7 DOWNTO 0);
-           SIGNAL dataout : STD_LOGIC_VECTOR(15 downto 0);
+           SIGNAL dataout_s : STD_LOGIC_VECTOR(15 downto 0);
            
 begin
+                --Branchement des signaux au ports du module SPI
     SPI :        entity work.spi_slave(comm)
-                 PORT MAP(sclk=>sclk_sig,mosi=>mosi_sig ); -- Branchements entre le module SPI et le generateur
-    
+                 PORT MAP(sclk=>sclk_sig,reset_n=>reset_n_sig,mosi=>mosi_sig,rx_req=>rx_req_sig,
+                          tx_load_en=>tx_load_en_sig,tx_load_data=>tx_load_data_sig, 
+                          rx_data=>rx_data_sig,busy=>busy_sig,miso=>miso_sig ); -- Branchements entre le module SPI et le generateur
+                --Branchement des signaux au ports du module Genertor
     Generateur : entity work.Generator(Wave_generator)
-                 PORT MAP(busy=busy_sig);
-
+                 PORT MAP(busy=>busy_sig,rx_data=>rx_data_sig,rx_req=>rx_req_sig,reset_n=>reset_n_sig,
+                          tx_load_en=>tx_load_en_sig,tx_load_data=>tx_load_data_sig,dataout=>dataout_s);
+            
+            --Branchement des signaux internes au ports du Wrapper
+                sclk<=sclk_sig; 
+                mosi<=mosi_sig; 
+                ss_n<=ss_n_sig; 
+                miso<=miso_sig; 
+                dataout<=dataout_s;
 end Behavioral;
