@@ -34,7 +34,14 @@ use IEEE.STD_LOGIC_1164.ALL;
 entity Generator is
     Port ( clk : in STD_LOGIC;
            reset : in STD_LOGIC;
-           cmd  : in STD_LOGIC_VECTOR(9 DOWNTO 0); -- À ADAPTER
+           -- I/O pour le module SPI
+           busy : in STD_LOGIC; --Indique si le module SPI est busy
+           rx_data  : in STD_LOGIC_VECTOR(7 DOWNTO 0); -- Data recu du module SPI
+           rx_req: out STD_LOGIC; -- Demande de recevoir le data du module SPI
+           reset_n : out STD_LOGIC; -- Reset le module SPI
+           tx_load_en : out  STD_LOGIC; -- Enable le transfert du data de Generator vers le module SPI pour ensuite aller au Arduino
+           tx_load_data : out STD_LOGIC_VECTOR(7 DOWNTO 0); -- Data a renvoyer au Arduino
+           -- Waveform en sortie
            dataout : out STD_LOGIC_VECTOR (15 downto 0));
 end Generator;
 
