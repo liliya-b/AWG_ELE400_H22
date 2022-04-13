@@ -41,14 +41,8 @@ GENERIC(
     mosi         : IN     STD_LOGIC;  --master out, slave in
     rx_req       : IN     STD_LOGIC;  --'1' while busy = '0' moves data to the rx_data output
     st_load_en   : IN     STD_LOGIC;  --asynchronous load enable
-    st_load_trdy : IN     STD_LOGIC;  --asynchronous trdy load input
-    st_load_rrdy : IN     STD_LOGIC;  --asynchronous rrdy load input
-    st_load_roe  : IN     STD_LOGIC;  --asynchronous roe load input
     tx_load_en   : IN     STD_LOGIC;  --asynchronous transmit buffer load enable
     tx_load_data : IN     STD_LOGIC_VECTOR(d_width-1 DOWNTO 0);  --asynchronous tx data to load
-    trdy         : BUFFER STD_LOGIC := '0';  --transmit ready bit
-    rrdy         : BUFFER STD_LOGIC := '0';  --receive ready bit
-    roe          : BUFFER STD_LOGIC := '0';  --receive overrun error bit
     rx_data      : OUT    STD_LOGIC_VECTOR(d_width-1 DOWNTO 0) := (OTHERS => '0');  --receive register output to logic
     busy         : OUT    STD_LOGIC := '0';  --busy signal to logic ('1' during transaction)
     miso         : OUT    STD_LOGIC := 'Z'); --master in, slave out
@@ -96,46 +90,8 @@ BEGIN
     IF(bit_cnt(2) = '1' AND falling_edge(clk)) THEN
       rd_add <= mosi;
     END IF;
-    
-    --trdy register
-    IF((ss_n = '1' AND st_load_en = '1' AND st_load_trdy = '0') OR reset_n = '0') THEN  
-      trdy <= '0';   --cleared by user logic or reset
-    ELSIF(ss_n = '1' AND ((st_load_en = '1' AND st_load_trdy = '1') OR tx_load_en = '1')) THEN
-      trdy <= '1';   --set when tx buffer written or set by user logic
-    ELSIF(falling_edge(clk)) THEN
-      IF(wr_add = '1' AND bit_cnt(9) = '1') THEN
-        trdy <= mosi;  --new value written over spi bus
-      ELSIF(rd_add = '0' AND bit_cnt(d_width+8) = '1') THEN
-        trdy <= '0';   --clear when transmit buffer read
-      END IF;
-    END IF;
-    
-    --rrdy register
-    IF((ss_n = '1' AND ((st_load_en = '1' AND st_load_rrdy = '0') OR rx_req = '1')) OR reset_n = '0') THEN
-      rrdy <= '0';   --cleared by user logic or rx_data has been requested or reset
-    ELSIF(ss_n = '1' AND st_load_en = '1' AND st_load_rrdy = '1') THEN
-      rrdy <= '1';   --set when set by user logic
-    ELSIF(falling_edge(clk)) THEN
-      IF(wr_add = '1' AND bit_cnt(10) = '1') THEN
-        rrdy <= mosi;  --new value written over spi bus
-      ELSIF(wr_add = '0' AND bit_cnt(d_width+8) = '1') THEN
-        rrdy <= '1';   --set when new data received
-      END IF;
-    END IF;
-    
-    --roe register
-    IF((ss_n = '1' AND st_load_en = '1' AND st_load_roe = '0') OR reset_n = '0') THEN
-      roe <= '0';   --cleared by user logic or reset
-    ELSIF(ss_n = '1' AND st_load_en = '1' AND st_load_roe = '1') THEN
-      roe <= '1';   --set by user logic
-    ELSIF(falling_edge(clk)) THEN
-      IF(rrdy = '1' AND wr_add = '0' AND bit_cnt(d_width+8) = '1') THEN
-        roe <= '1';   --set by actual overrun
-      ELSIF(wr_add = '1' AND bit_cnt(11) = '1') THEN
-        roe <= mosi;  --new value written by spi bus
-      END IF;
-    END IF;
-    
+        
+ 
     --receive registers
     --write to the receive register from master
     IF(reset_n = '0') THEN
