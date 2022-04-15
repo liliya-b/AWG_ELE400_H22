@@ -1,0 +1,8 @@
+# compile vhdl design source files
+vhdl xil_defaultlib  \
+"../../../../ELE400_LB.gen/sources_1/ip/ila_0/sim/ila_0.vhd" \
+"../../../../Generator.vhd" \
+"../../../../top.vhd" \
+
+# Do not sort compile order
+nosort

@@ -1,0 +1,13 @@
+#-----------------------------------------------------------
+# Vivado v2021.2 (64-bit)
+# SW Build 3367213 on Tue Oct 19 02:48:09 MDT 2021
+# IP Build 3369179 on Thu Oct 21 08:25:16 MDT 2021
+# Start of session at: Wed Apr 13 16:57:10 2022
+# Process ID: 4188
+# Current directory: C:/Users/lilyb/Desktop/ELE400_DEMO/ELE400_LB.runs/impl_1
+# Command line: vivado.exe -log top.vdi -applog -product Vivado -messageDb vivado.pb -mode batch -source top.tcl -notrace
+# Log file: C:/Users/lilyb/Desktop/ELE400_DEMO/ELE400_LB.runs/impl_1/top.vdi
+# Journal file: C:/Users/lilyb/Desktop/ELE400_DEMO/ELE400_LB.runs/impl_1\vivado.jou
+# Running On: DESKTOP-Q77J3L5, OS: Windows, CPU Frequency: 1797 MHz, CPU Physical cores: 16, Host memory: 16469 MB
+#-----------------------------------------------------------
+source top.tcl -notrace
